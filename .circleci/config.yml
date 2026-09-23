@@ -1,0 +1,74 @@
+version: 2.1
+
+parameters:
+  run_flaky:
+    type: boolean
+    default: false
+
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2024.01
+    parallelism: 2
+    steps:
+      - checkout
+      - run:
+          name: Build step
+          command: |
+            mkdir -p /tmp/artifacts
+            echo "datagen artifact from node $CIRCLE_NODE_INDEX" > /tmp/artifacts/output-$CIRCLE_NODE_INDEX.txt
+      - store_artifacts:
+          path: /tmp/artifacts
+
+  with-context:
+    docker:
+      - image: cimg/base:2024.01
+    context: datagen-context
+    steps:
+      - checkout
+      - run:
+          name: Use context
+          command: echo "job scoped to datagen-context"
+
+  flaky:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: Randomly-flaky test
+          command: |
+            mkdir -p /tmp/test-results
+            python3 - <<'PYEOF'
+            import random, sys
+            ok = random.random() < 0.5
+            xml = ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                   "<testsuite name=\"flaky\" tests=\"1\" failures=\"{fail}\">\n"
+                   "<testcase classname=\"datagen.FlakySuite\" name=\"test_sometimes_fails\" time=\"0.01\">\n"
+                   "{failure}\n"
+                   "</testcase>\n"
+                   "</testsuite>\n").format(
+                fail=0 if ok else 1,
+                failure="" if ok else "<failure message=\"intentional flake\">boom</failure>",
+            )
+            open("/tmp/test-results/results.xml", "w").write(xml)
+            if not ok:
+                sys.exit(1)
+            PYEOF
+      - store_test_results:
+          path: /tmp/test-results
+          when: always
+
+workflows:
+  main:
+    unless: << pipeline.parameters.run_flaky >>
+    jobs:
+      - build
+      - with-context:
+          requires:
+            - build
+
+  datagen-flaky:
+    when: << pipeline.parameters.run_flaky >>
+    jobs:
+      - flaky
