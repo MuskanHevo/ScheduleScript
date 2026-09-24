@@ -1,70 +1,100 @@
 version: 2.1
 
-parameters:
-  run_flaky:
-    type: boolean
-    default: false
-
 jobs:
-  build:
-    docker:
-      - image: cimg/base:2024.01
-    parallelism: 2
-    steps:
-      - checkout
-      - run:
-          name: Build step
-          command: |
-            mkdir -p /tmp/artifacts
-            echo "datagen artifact from node $CIRCLE_NODE_INDEX" > /tmp/artifacts/output-$CIRCLE_NODE_INDEX.txt
-      - store_artifacts:
-          path: /tmp/artifacts
-
-  with-context:
+  noop:
     docker:
       - image: cimg/base:2024.01
     steps:
-      - checkout
-      - run:
-          name: Use context
-          command: echo "job scoped to datagen-context"
-
-  legacy-probe:
-    docker:
-      - image: circleci/python:2.7
-    steps:
-      - checkout
-      - run:
-          name: Legacy image probe (job_message research)
-          command: echo "probing for a deprecation/legacy-image message on this job"
-
-  flaky:
-    docker:
-      - image: cimg/python:3.11
-    steps:
-      - checkout
-      - run:
-          name: Randomly-flaky test
-          command: |
-            mkdir -p /tmp/test-results
-            echo aW1wb3J0IHJhbmRvbSwgc3lzCgpvayA9IHJhbmRvbS5yYW5kb20oKSA8IDAuNQpmYWlsID0gMCBpZiBvayBlbHNlIDEKZmFpbHVyZSA9ICIiIGlmIG9rIGVsc2UgJzxmYWlsdXJlIG1lc3NhZ2U9ImludGVudGlvbmFsIGZsYWtlIj5ib29tPC9mYWlsdXJlPicKeG1sID0gKAogICAgJzw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IlVURi04Ij8+JwogICAgJzx0ZXN0c3VpdGUgbmFtZT0iZmxha3kiIHRlc3RzPSIxIiBmYWlsdXJlcz0ie2ZhaWx9Ij4nCiAgICAnPHRlc3RjYXNlIGNsYXNzbmFtZT0iZGF0YWdlbi5GbGFreVN1aXRlIiBuYW1lPSJ0ZXN0X3NvbWV0aW1lc19mYWlscyIgdGltZT0iMC4wMSI+JwogICAgIntmYWlsdXJlfSIKICAgICI8L3Rlc3RjYXNlPjwvdGVzdHN1aXRlPiIKKS5mb3JtYXQoZmFpbD1mYWlsLCBmYWlsdXJlPWZhaWx1cmUpCgp3aXRoIG9wZW4oIi90bXAvdGVzdC1yZXN1bHRzL3Jlc3VsdHMueG1sIiwgInciKSBhcyBmOgogICAgZi53cml0ZSh4bWwpCgppZiBub3Qgb2s6CiAgICBzeXMuZXhpdCgxKQo= | base64 -d > /tmp/flaky_test.py
-            python3 /tmp/flaky_test.py
-      - store_test_results:
-          path: /tmp/test-results
-          when: always
+      - run: echo noop
 
 workflows:
-  main:
-    unless: << pipeline.parameters.run_flaky >>
+  wf-1:
     jobs:
-      - build
-      - with-context:
-          context: datagen-context
-          requires:
-            - build
-      - legacy-probe
-
-  datagen-flaky:
-    when: << pipeline.parameters.run_flaky >>
+      - noop
+  wf-2:
     jobs:
-      - flaky
+      - noop
+  wf-3:
+    jobs:
+      - noop
+  wf-4:
+    jobs:
+      - noop
+  wf-5:
+    jobs:
+      - noop
+  wf-6:
+    jobs:
+      - noop
+  wf-7:
+    jobs:
+      - noop
+  wf-8:
+    jobs:
+      - noop
+  wf-9:
+    jobs:
+      - noop
+  wf-10:
+    jobs:
+      - noop
+  wf-11:
+    jobs:
+      - noop
+  wf-12:
+    jobs:
+      - noop
+  wf-13:
+    jobs:
+      - noop
+  wf-14:
+    jobs:
+      - noop
+  wf-15:
+    jobs:
+      - noop
+  wf-16:
+    jobs:
+      - noop
+  wf-17:
+    jobs:
+      - noop
+  wf-18:
+    jobs:
+      - noop
+  wf-19:
+    jobs:
+      - noop
+  wf-20:
+    jobs:
+      - noop
+  wf-21:
+    jobs:
+      - noop
+  wf-22:
+    jobs:
+      - noop
+  wf-23:
+    jobs:
+      - noop
+  wf-24:
+    jobs:
+      - noop
+  wf-25:
+    jobs:
+      - noop
+  wf-26:
+    jobs:
+      - noop
+  wf-27:
+    jobs:
+      - noop
+  wf-28:
+    jobs:
+      - noop
+  wf-29:
+    jobs:
+      - noop
+  wf-30:
+    jobs:
+      - noop
